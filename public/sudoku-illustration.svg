@@ -1,0 +1,25 @@
+<svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="300" height="300" rx="40" fill="#f3f4f6"/>
+  <g>
+    <rect x="40" y="40" width="220" height="220" rx="16" fill="#fff" stroke="#3b82f6" stroke-width="4"/>
+    <g stroke="#3b82f6" stroke-width="2">
+      <line x1="40" y1="113.33" x2="260" y2="113.33"/>
+      <line x1="40" y1="186.66" x2="260" y2="186.66"/>
+      <line x1="113.33" y1="40" x2="113.33" y2="260"/>
+      <line x1="186.66" y1="40" x2="186.66" y2="260"/>
+    </g>
+    <g stroke="#3b82f6" stroke-width="4">
+      <line x1="40" y1="80" x2="260" y2="80"/>
+      <line x1="40" y1="150" x2="260" y2="150"/>
+      <line x1="40" y1="220" x2="260" y2="220"/>
+      <line x1="80" y1="40" x2="80" y2="260"/>
+      <line x1="150" y1="40" x2="150" y2="260"/>
+      <line x1="220" y1="40" x2="220" y2="260"/>
+    </g>
+    <text x="70" y="100" font-size="32" fill="#3b82f6" font-family="monospace" font-weight="bold">5</text>
+    <text x="120" y="170" font-size="32" fill="#3b82f6" font-family="monospace" font-weight="bold">9</text>
+    <text x="200" y="210" font-size="32" fill="#3b82f6" font-family="monospace" font-weight="bold">3</text>
+    <text x="170" y="80" font-size="32" fill="#3b82f6" font-family="monospace" font-weight="bold">7</text>
+    <text x="90" y="230" font-size="32" fill="#3b82f6" font-family="monospace" font-weight="bold">1</text>
+  </g>
+</svg>

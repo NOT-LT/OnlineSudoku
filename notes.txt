@@ -1,0 +1,6 @@
+This projects uses Next 13+, which utilizes the app routing instead of the ordinary /pages folder.
+- You put your page files as React Server Components or Client Components inside src/app/.
+- You still keep your reusable components outside the app/ folder — typically in src/components/.
+- Types are declared in /src/types.d.ts. Any interface declared in this file is globally available without imports.
+
+SudokuGenerator Level 5 doesn't work
