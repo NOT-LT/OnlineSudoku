@@ -14,6 +14,7 @@ const RegistrationPage = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [isFaceBookLoading, setIsFaceBookLoading] = useState(false);
   const [error, setError] = useState('');
 
   const router = useRouter();
@@ -26,6 +27,7 @@ const RegistrationPage = () => {
       router.push(`/profile?uid=${user.uid}`);
     } catch (error: any) {
       setError(error.message || 'Registration failed.');
+      toast.error("Registration failed: " + error.message.replace("Firebase:", ""));
     } finally {
       setLoading(false);
     }
@@ -42,15 +44,20 @@ const RegistrationPage = () => {
     }, 1500);
   };
 
-  const handleFacebookRegister = () => {
-    toast.info('Facebook registration coming soon!');
-    console.log('Facebook registration attempted');
+  const handleFacebookRegister = async () => {
+    setIsFaceBookLoading(true);
+    setTimeout(() => {
+      setIsFaceBookLoading(false);
+      toast.info('Signed up with Facebook successfully!');
+      console.log('Facebook registration attempted');
+    }, 1500);
+
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 flex items-center justify-center p-4">
       <div className="w-full max-w-6xl">
-        <Card className="overflow-hidden shadow-2xl border-0 bg-white/80 backdrop-blur-sm">
+        <Card className="overflow-hidden shadow-2xl border-0  backdrop-blur-sm p-0">
           <CardContent className="p-0">
             <div className="flex flex-col lg:flex-row min-h-[600px]">
               {/* Left Side - Illustration */}
@@ -96,7 +103,7 @@ const RegistrationPage = () => {
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
                           required
-                          className="h-12 text-base border-2 border-gray-200 focus:border-blue-400 focus:ring-blue-400/20 rounded-xl bg-gray-50/50 transition-all duration-200 hover:border-gray-300"
+                          className="h-12 text-base border-gray-200 focus:border-blue-400 outline-none rounded-xl bg-gray-50/50 transition-all duration-200 hover:border-gray-300"
                         />
                       </div>
                       <div className="relative">
@@ -106,15 +113,15 @@ const RegistrationPage = () => {
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           required
-                          className="h-12 text-base border-2 border-gray-200 focus:border-blue-400 focus:ring-blue-400/20 rounded-xl bg-gray-50/50 transition-all duration-200 hover:border-gray-300"
-                        />
+                          className="h-12 text-base border border-gray-200 rounded-xl bg-gray-50/50 transition-all duration-200 hover:border-gray-300 
+outline-none focus:outline-none focus:ring-0 focus:border-gray-200 focus:shadow-none" />
                       </div>
                     </div>
 
                     <Button
                       type="submit"
                       disabled={loading}
-                      className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
+                      className="cursor-pointer w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
                     >
                       {loading ? (
                         <div className="flex items-center gap-2">
@@ -142,7 +149,7 @@ const RegistrationPage = () => {
                       onClick={handleGoogleRegister}
                       disabled={isGoogleLoading}
                       variant="outline"
-                      className="w-full h-12 border-2 border-gray-200 hover:border-gray-300 hover:bg-gray-50 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                      className="cursor-pointer w-full h-12 border-2 border-gray-200 hover:border-gray-300 hover:bg-gray-50 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
                     >
                       {isGoogleLoading ? (
                         <div className="flex items-center gap-2">
@@ -165,18 +172,25 @@ const RegistrationPage = () => {
                     <Button
                       type="button"
                       onClick={handleFacebookRegister}
-                      className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                      className="cursor-pointer w-full h-12 border-2 border-gray-200 hover:border-gray-300 hover:bg-[#292929] rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
                     >
-                      <div className="flex items-center gap-3">
-                        <Facebook className="w-5 h-5" />
-                        Sign up with Facebook
-                      </div>
+                      {isFaceBookLoading ? (
+                        <div className="flex items-center gap-2">
+                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                          Signing up...
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-3">
+                          <Facebook className="w-5 h-5" />
+                          Sign up with Facebook
+                        </div>
+                      )}
                     </Button>
                   </div>
 
                   <p className="text-center text-sm text-gray-500">
                     Already have an account?{' '}
-                    <button className="text-blue-600 hover:text-blue-700 font-medium hover:underline transition-colors">
+                    <button className="text-blue-600 hover:text-blue-700 font-medium hover:underline transition-colors hover:cursor-pointer" onClick={() => router.push('/login')}>
                       Sign in here
                     </button>
                   </p>

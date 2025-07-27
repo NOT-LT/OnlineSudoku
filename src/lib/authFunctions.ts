@@ -1,37 +1,43 @@
-import { 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword, 
-  GoogleAuthProvider, 
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
   signInWithPopup,
-  getAdditionalUserInfo 
+  getAdditionalUserInfo
 } from 'firebase/auth';
 import { auth, db, storage } from './firebase';
 import { doc, setDoc, serverTimestamp, updateDoc, getDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 export const registerUser = async (email: string, password: string) => {
-  const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-  const user = userCredential.user;
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    console.log('User registered:', userCredential);
+    const user = userCredential.user;
 
-  // Step 2: Create Firestore document
-  const userDoc = {
-    uid: user.uid,
-    email: user.email,
-    rating: 0,
-    avatar: '',
-    createdAt: serverTimestamp(),
-    currentGameId: null,
-    stats: {
-      gamesPlayed: 0,
-      gamesWon: 0,
-      gamesLost: 0
-    },
-    completeProfile: false,
-  };
+    // Step 2: Create Firestore document
+    const userDoc = {
+      uid: user.uid,
+      email: user.email,
+      rating: 0,
+      avatar: '',
+      createdAt: serverTimestamp(),
+      currentGameId: null,
+      stats: {
+        gamesPlayed: 0,
+        gamesWon: 0,
+        gamesLost: 0
+      },
+      completeProfile: false,
+    };
 
-  await setDoc(doc(db, 'users', user.uid), userDoc);
+    await setDoc(doc(db, 'users', user.uid), userDoc);
 
-  return user;
+    return user;
+  } catch (error) {
+    console.error('Error registering user:', error);
+    throw error;
+  }
 };
 
 export async function uploadUserAvatar(uid: string, file: File) {
@@ -69,16 +75,26 @@ export const updateUserProfile = async (uid: string, username: string, name: str
   return userDoc;
 }
 
+
+
 export const signIn = async (email: string, password: string) => {
-  const userCredentials =  await signInWithEmailAndPassword(auth, email, password);
-  const user = userCredentials.user;
-  if (!user) {
+  const userCredentials = await signInWithEmailAndPassword(auth, email, password);
+  const userAuth = userCredentials.user;
+  console.log('User signed in:', userAuth);
+  if (!userAuth) {
     throw new Error('User not found');
   }
+  const user = await getDoc(doc(db, 'users', userAuth.uid)).then(doc => {
+    if (!doc.exists()) {
+      throw new Error('User document not found');
+    }
+    return doc.data() as User;
+  });
   await setDoc(doc(db, 'users', user.uid), {
     isOnline: true,
   }, { merge: true });
-  return user;
+
+  return {userAuth, user};
 }
 
 export const signOut = async () => {
@@ -100,10 +116,10 @@ export const signInWithGoogle = async () => {
     const googleProvider = new GoogleAuthProvider();
     const result = await signInWithPopup(auth, googleProvider);
     const user = result.user;
-    
+
     // Check if this is a new user
     const { isNewUser } = getAdditionalUserInfo(result) || { isNewUser: false };
-    
+
     // If new user, create a document for them
     if (isNewUser) {
       const userDoc = {
@@ -123,21 +139,21 @@ export const signInWithGoogle = async () => {
         completeProfile: false,  // They still need to pick a username
         isOnline: true,
       };
-      
+
       await setDoc(doc(db, 'users', user.uid), userDoc);
-      return { ...user, completeProfile: false }; 
+      return { ...user, completeProfile: false };
     } else {
       // Existing user - update online status
       const userDocRef = doc(db, 'users', user.uid);
       await updateDoc(userDocRef, { isOnline: true });
-      
+
       // Check if they have completed their profile
       const userDoc = await getDoc(userDocRef);
       const userData = userDoc.data();
-      
-      return { 
-        ...user, 
-        completeProfile: userData?.completeProfile || false 
+
+      return {
+        ...user,
+        completeProfile: userData?.completeProfile || false
       };
     }
   } catch (error) {
@@ -155,7 +171,7 @@ export const registerWithGoogle = async () => {
     const googleProvider = new GoogleAuthProvider();
     const result = await signInWithPopup(auth, googleProvider);
     const user = result.user;
-    
+
     // Create a new user document regardless of whether they've signed in before
     const userDoc = {
       uid: user.uid,
@@ -174,7 +190,7 @@ export const registerWithGoogle = async () => {
       completeProfile: false,  // They still need to pick a username
       isOnline: true,
     };
-    
+
     await setDoc(doc(db, 'users', user.uid), userDoc, { merge: true });
     return user;
   } catch (error) {

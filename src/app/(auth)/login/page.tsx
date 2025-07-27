@@ -4,25 +4,28 @@
 import { useState } from 'react';
 import { signIn } from '@/lib/authFunctions';
 import { useRouter } from 'next/navigation';
-
+import { toast } from 'sonner';
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       setLoading(true);
-      const user = await signIn(email, password);
+      const {userAuth, user} = await signIn(email, password);
       if (!user.completeProfile) {
         router.push(`/profile?uid=${user.uid}`);
       } else {
         router.push('/');
       }
     } catch (err: any) {
-      alert(err.message);
+      setError(err.message || 'Login failed.');
+      toast.error("Login failed: " + err.message.replace("Firebase:", ""));
+      console.error('Login failed:', err)
     } finally {
       setLoading(false);
     }
