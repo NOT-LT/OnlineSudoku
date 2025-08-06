@@ -1,28 +1,27 @@
-// pages/index.tsx
-'use client';
-import { useRouter } from 'next/navigation';
+import SudokuGrid from '@/components/sudokuGrid';
+import HomeClient from '@/components/HomeClient';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Online Sudoku - Challenge Your Mind',
+  description: 'Play challenging Sudoku puzzles online. Compete with players worldwide in real-time Sudoku matches. Improve your logic and problem-solving skills.',
+  keywords: 'sudoku, puzzle, online game, brain training, logic game, multiplayer, online sudoku',
+  openGraph: {
+    title: 'Online Sudoku - Challenge Your Mind',
+    description: 'Play challenging Sudoku puzzles online. Compete with players worldwide.',
+    type: 'website',
+  },
+};
 
 export default function Home() {
-  const router = useRouter();
-
-  const startMatchmaking = () => {
-    router.push('/matchmaking');
-  };
-
   return (
     <div style={{ padding: 40, textAlign: 'center' }}>
+      <HomeClient />
+
       <h1>Welcome to Online Sudoku</h1>
-      <button
-        onClick={startMatchmaking}
-        style={{
-          padding: '10px 20px',
-          fontSize: '16px',
-          cursor: 'pointer',
-          marginTop: 20,
-        }}
-      >
-        Create Game
-      </button>
+      <p>Challenge your mind with our interactive Sudoku puzzles. Play solo or compete with players from around the world!</p>
+
+      <SudokuGrid />
     </div>
   );
 }

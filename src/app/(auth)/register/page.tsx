@@ -24,7 +24,7 @@ const RegistrationPage = () => {
     try {
       setLoading(true);
       const user = await registerUser(email, password);
-      router.push(`/profile?uid=${user.uid}`);
+      router.push(`/complete-profile?uid=${user.uid}`);
     } catch (error: any) {
       setError(error.message || 'Registration failed.');
       toast.error("Registration failed: " + error.message.replace("Firebase:", ""));
@@ -35,13 +35,21 @@ const RegistrationPage = () => {
 
   const handleGoogleRegister = async () => {
     setIsGoogleLoading(true);
-
-    // Simulate Google registration
-    setTimeout(() => {
+    const { user, userDoc, uncompletedFields } = await registerWithGoogle();
+    if (uncompletedFields.length > 0) {
       setIsGoogleLoading(false);
-      toast.success('Signed up with Google successfully!');
-      console.log('Google registration attempted');
-    }, 1500);
+      toast.info('Please complete your profile to continue.');
+      router.push(`/complete-profile?uid=${user.uid}`);
+      return;
+    }
+    toast.success('Signed up with Google successfully!');
+
+    // // Simulate Google registration
+    // setTimeout(() => {
+    //   setIsGoogleLoading(false);
+    //   toast.success('Signed up with Google successfully!');
+    //   console.log('Google registration attempted');
+    // }, 1500);
   };
 
   const handleFacebookRegister = async () => {
@@ -61,9 +69,9 @@ const RegistrationPage = () => {
           <CardContent className="p-0">
             <div className="flex flex-col lg:flex-row min-h-[600px]">
               {/* Left Side - Illustration */}
-              <div className="flex-1 bg-gradient-to-br from-blue-100 to-blue-200 p-8 lg:p-12 flex flex-col items-center justify-center relative overflow-hidden">
+              <div className="flex-1 bg-gradient-to-br from-blue-100 to-blue-200 p-8 lg:p-12 flex-col items-center justify-center relative overflow-hidden hidden md:flex">
                 <div className="text-center z-10 space-y-6">
-                  <div className="animate-fade-in">
+                  <div className="animate-fade-in scale-75 sm:scale-90 md:scale-100">
                     <SudokuGrid />
                   </div>
                   <div className="space-y-3 animate-fade-in delay-300">

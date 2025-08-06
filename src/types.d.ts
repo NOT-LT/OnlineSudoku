@@ -1,7 +1,7 @@
 type User = {
   uid: string;             // Firebase Auth User ID (unique)
   username: string;        // Display name or chosen username
-  email: string;           // User email (optional if using anonymous auth)
+  email: string | null;           // User email (optional if using anonymous auth)
   createdAt: Timestamp;    // Account creation timestamp
   stats?: {                // Game statistics (optional)
     gamesPlayed: number;
@@ -14,7 +14,7 @@ type User = {
     theme: 'light' | 'dark';
     notificationsEnabled: boolean;
   };
-  currentGameId?: string;  // If user is in a current active game
+  currentGameId?: string | null;  // If user is in a current active game
   [key: string]: any;
 };
 
